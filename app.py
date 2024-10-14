@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import concurrent.futures as cf
 import glob
 import io
@@ -17,6 +19,11 @@ from pypdf import PdfReader
 from tenacity import retry, retry_if_exception_type
 
 import re
+
+# 텍스트 파일을 읽는 함수 추가
+def read_text_file(file_path):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        return file.read()
 
 def read_readme():
     readme_path = Path("README.md")
@@ -214,7 +221,40 @@ Naturally summarize the main insights and takeaways from the short summary. This
 The summary should have around 256 words.
 """,
     },
+################# PODCAST Korean ##################
+"podcast (Korean)": {
+    "intro": """당신의 임무는 제공된 입력 텍스트를 가져와 NPR 스타일의 생동감 있고, 흥미롭고, 유익한 팟캐스트 대화로 바꾸는 것입니다. 입력 텍스트는 PDF나 웹 페이지와 같은 다양한 소스에서 올 수 있기 때문에 지저분하거나 구조화되지 않을 수 있습니다.
 
+형식 문제나 관련 없는 정보에 대해 걱정하지 마세요; 당신의 목표는 주요 요점을 추출하고, 팟캐스트에서 논의될 수 있는 정의와 흥미로운 사실들을 식별하는 것입니다.
+
+모든 사용된 용어를 폭넓은 청중을 위해 주의 깊게 정의하세요.
+""",
+    "text_instructions": "먼저, 입력 텍스트를 주의 깊게 읽고 주요 주제, 핵심 요점, 그리고 흥미로운 사실이나 일화를 식별하세요. 이 정보를 재미있고 흥미로운 방식으로 어떻게 제시할 수 있을지 생각해보세요. 고품질 프레젠테이션에 적합해야 합니다.",
+    "scratch_pad": """입력 텍스트에서 식별한 주요 주제와 핵심 요점을 논의할 창의적인 방법을 브레인스토밍하세요. 유사성, 예시, 스토리텔링 기법 또는 가상 시나리오를 사용하여 내용을 청취자들에게 더 관련성 있고 흥미롭게 만드는 것을 고려해보세요.
+
+당신의 팟캐스트가 일반 청중에게 접근 가능해야 함을 명심하세요. 따라서 전문 용어를 너무 많이 사용하거나 주제에 대한 사전 지식을 가정하지 마세요. 필요하다면 복잡한 개념을 간단한 용어로 간략히 설명하는 방법을 생각해보세요.
+
+입력 텍스트의 빈 공간을 채우거나 팟캐스트에서 탐구할 수 있는 생각을 자극하는 질문을 만들기 위해 상상력을 사용하세요. 목표는 유익하고 재미있는 대화를 만드는 것이므로 접근 방식에서 창의적이 되세요.
+
+모든 사용된 용어를 명확하게 정의하고 배경을 설명하는 데 노력을 기울이세요.
+
+팟캐스트 대화를 위한 브레인스토밍 아이디어와 대략적인 개요를 여기에 작성하세요. 마지막에 반복하고 싶은 주요 통찰과 결론을 반드시 기록하세요.
+
+재미있고 흥미진진하게 만들어야 합니다.
+""",
+    "prelude": """이제 아이디어를 브레인스토밍하고 대략적인 개요를 만들었으니, 실제 팟캐스트 대화를 작성할 시간입니다. 진행자와 게스트 사이의 자연스럽고 대화체적인 흐름을 목표로 하세요. 브레인스토밍 세션에서 나온 최고의 아이디어를 통합하고 복잡한 주제를 이해하기 쉬운 방식으로 설명하세요.
+""",
+    "dialog": """여기에 브레인스토밍 세션 동안 생각해낸 핵심 포인트와 창의적인 아이디어를 바탕으로 매우 길고, 흥미롭고, 유익한 팟캐스트 대화를 작성하세요. 대화체 톤을 사용하고 일반 청중이 내용을 이해할 수 있도록 필요한 맥락이나 설명을 포함하세요.
+
+진행자와 게스트에 대해 절대 가상의 이름을 사용하지 마세요. 대신 청취자들에게 매력적이고 몰입감 있는 경험을 만들어주세요. [진행자] 또는 [게스트]와 같은 대괄호 안의 자리 표시자를 포함하지 마세요. 당신의 출력이 소리 내어 읽힐 수 있도록 설계하세요 - 이는 직접 오디오로 변환될 것입니다.
+
+주제를 유지하고 흥미로운 흐름을 유지하면서 대화를 가능한 한 길고 상세하게 만드세요. 입력 텍스트의 핵심 정보를 재미있는 방식으로 전달하면서 가능한 한 가장 긴 팟캐스트 에피소드를 만들기 위해 당신의 전체 출력 능력을 사용하세요.
+
+대화의 끝에서, 진행자와 게스트 발언자들이 자연스럽게 그들의 토론에서 나온 주요 통찰과 결론을 요약하게 하세요. 이는 대화에서 자연스럽게 흘러나와야 하며, 주요 포인트를 캐주얼하고 대화체적인 방식으로 반복해야 합니다. 명백한 요약처럼 들리지 않도록 주의하세요 - 목표는 마무리하기 전에 중심 아이디어를 마지막으로 한 번 더 강조하는 것입니다.
+
+팟캐스트는 약 20,000단어 정도가 되어야 합니다.
+""",
+},
 ################# PODCAST French ##################
 "podcast (French)": {
     "intro": """Votre tâche consiste à prendre le texte fourni et à le transformer en un dialogue de podcast vivant, engageant et informatif, dans le style de NPR. Le texte d'entrée peut être désorganisé ou non structuré, car il peut provenir de diverses sources telles que des fichiers PDF ou des pages web.
@@ -547,9 +587,14 @@ def generate_audio(
     # If there's no original text, extract it from the uploaded files
     if not combined_text:
         for file in files:
-            with Path(file).open("rb") as f:
-                reader = PdfReader(f)
-                text = "\n\n".join([page.extract_text() for page in reader.pages if page.extract_text()])
+            file_path = Path(file)
+            if file_path.suffix.lower() == '.pdf':
+                with file_path.open("rb") as f:
+                    reader = PdfReader(f)
+                    text = "\n\n".join([page.extract_text() for page in reader.pages if page.extract_text()])
+                    combined_text += text + "\n\n"
+            elif file_path.suffix.lower() in ['.txt', '.md', '.rtf']:
+                text = read_text_file(file_path)
                 combined_text += text + "\n\n"
 
     # Configure the LLM based on selected model and api_base
@@ -669,7 +714,7 @@ def process_feedback_and_regenerate(feedback, *args):
     new_args.append(feedback)  # Add user feedback as a new argument
     return validate_and_generate_audio(*new_args)
 
-with gr.Blocks(title="PDF to Audio", css="""
+with gr.Blocks(title="PDF and Text to Audio", css="""
     #header {
         display: flex;
         align-items: center;
@@ -713,8 +758,10 @@ with gr.Blocks(title="PDF to Audio", css="""
 
     with gr.Row(elem_id="main_container"):
         with gr.Column(scale=2):
-            files = gr.Files(label="PDFs", file_types=["pdf"], )
-            
+            files = gr.Files(
+                label="Input Files",
+                file_types=["pdf", "txt", "md", "rtf"]
+            )     
             openai_api_key = gr.Textbox(
                 label="OpenAI API Key",
                 visible=True,  # Always show the API key field
@@ -880,4 +927,4 @@ demo.queue(max_size=20, default_concurrency_limit=32)
 
 # Launch the Gradio app
 if __name__ == "__main__":
-    demo.launch()
+    demo.launch(server_name="0.0.0.0", server_port=5559)
