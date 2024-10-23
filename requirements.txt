@@ -5,3 +5,4 @@ pypdf
 loguru
 promptic
 tenacity
+elevenlabs
