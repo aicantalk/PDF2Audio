@@ -1,3 +1,8 @@
-﻿gradio_cached_examples
-.env
+﻿#
+gradio_cached_examples/
+result/
 .lab/
+
+#
+.env
+.DS_Store
